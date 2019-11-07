@@ -2,10 +2,13 @@ class Aba
   class Batch
     include Aba::Validations
 
-    attr_accessor :bsb, :financial_institution, :user_name, :user_id, :description, :process_at, :transactions
+    attr_accessor :bsb, :account_number, :financial_institution, :user_name, :user_id, :description, :process_at, :transactions
 
     # BSB
     validates_bsb         :bsb, allow_blank: true
+
+    # Account Number
+    validates_account_number  :account_number
 
     # Financial Institution
     validates_length      :financial_institution, 3
@@ -106,10 +109,16 @@ class Aba
       output = "0"
 
       # Optional branch number of the funds account with a hyphen in the 4th character position
-      # Char position: 2-18
+      # Char position: 2-8
       # Max: 17
       # Blank filled
-      output += self.bsb.nil? ? " " * 17 : self.bsb.to_s.ljust(17)
+      output += self.bsb.nil? ? " " * 7 : self.bsb.to_s.ljust(7)
+
+      # Optional account number
+      # Char position: 9-18
+      # Max: 10
+      # Blank filled
+      output += self.account_number.nil? ? " " * 10 : self.account_number.to_s.ljust(10)
 
       # Sequence number
       # Char position: 19-20
